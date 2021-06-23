@@ -1,1 +1,112 @@
+#:kivy 1.0.9
+#:import utils kivy.utils
 
+<PongBall>:
+    size: 50, 50
+    canvas:
+        Color:
+            rgba: utils.rgba('FFB133')
+        Ellipse:
+            pos: self.pos
+            size: self.size
+
+<PongPaddle>:
+    size: 25, 200
+    canvas:
+        Color:
+            rgba: utils.rgba('050E5C')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<PongGame>:
+    ball: pong_ball
+    player1: player_left
+    player2: player_right
+    result : game_result
+    canvas:
+        Rectangle:
+            pos: self.center_x - 5, 0
+            size: 10, self.height
+
+    BoxLayout:
+        orientation: 'vertical'
+        center_x: root.width / 1.9
+        top: root.top - 100
+        opacity: 2 if root.player1.name=="" or root.player2.name=="" else 0
+        width: 500
+        height: 150
+        BoxLayout:
+            orientation: 'horizontal'
+            Label:
+                text: 'Enter Name of Player1'
+                color: utils.rgba('1BF40C')
+            TextInput:
+                id: name1
+                font_size: 16
+        BoxLayout:
+            orientation: 'horizontal'
+            Label:
+                text: 'Enter Name of Player2'
+                color: utils.rgba('FF1700')
+            TextInput:
+                id: name2
+                font_size: 16
+        Label:
+            text: "Enter name of both players before proceeding." if root.player1.name=="" or root.player2.name=="" else ""
+            color: utils.rgba('C3109F')
+        Button:
+            width: 100
+            text: 'Start Game'
+            on_press: root.set_player_info()
+
+    Label:
+        font_size: 20
+        center_x: root.width / 4
+        top: root.top - 10
+        text: root.player1.name +" " + str(root.player1.score)
+        color: utils.rgba('1BF40C')
+
+    Label:
+        font_size: 20
+        center_x: root.width * 3 / 4
+        top: root.top - 10
+        text: root.player2.name +" " + str(root.player2.score)
+        color: utils.rgba('FF1700')
+
+    Label:
+        font_size: 30
+        center_x: root.width * 2 / 4
+        top: root.top  * 2 / 3
+        text: str(root.result.info) if str(root.result.info)!="None" else str("")
+        color: utils.rgba('1BF40C') if root.result.winner==1 else utils.rgba('FF1700')
+
+    Button:
+        height: '45dp'
+        opacity: 0 if root.result.winner==0 else 100
+        disabled: True if root.result.winner==0 else False
+        center_x: root.width * 2 / 4
+        top: root.top * 2 / 5
+        size_hint_y: None
+        text: 'Play Again'
+        on_press: root.play_again()
+
+    PongBall:
+        id: pong_ball
+        center: self.parent.center
+
+    PongPaddle:
+        id: player_left
+        x: root.x
+        center_y: root.center_y
+
+    PongPaddle:
+        id: player_right
+        x: root.width - self.width
+        center_y: root.center_y
+
+
+    Result:
+        id: game_result
+        x: root.width - self.width
+        center_y: root.center_y
